@@ -29,7 +29,7 @@ window.EVENT_CONFIG = {
    * Reword anything guests see. Emoji are fine. Leave a value "" to hide it.
    */
   text: {
-    heart:           "\uD83D\uDC9A",           // little accent emoji (💚)
+    heart:           "🤍",
     welcome:         "Thank you for celebrating with us",
     footer:          "Thank you for celebrating with us",
     galleryTagline:  "Photos shared by our guests",
