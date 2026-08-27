@@ -71,17 +71,17 @@ window.EVENT_CONFIG = {
    * Any CSS color works ("#7a8f6a", "rebeccapurple", "rgb(...)").
    */
   theme: {
-    primary:    "#6A7280",  // slate blue-gray
-    secondary:  "#D8C8A8",  // champagne gold
+    primary:    "#6A7280",
+    secondary:  "#D8C8A8",
   
-    background: "#F7F5F2",  // warm ivory
+    background: "#F7F5F2",
     text:       "#4A4A4A",
     muted:      "#999999",
   
-    googleFonts: ["Cormorant Garamond", "Montserrat"],
+    googleFonts: ["Cormorant Garamond"],
   
     scriptFont: "'Cormorant Garamond', Georgia, serif",
-    bodyFont:   "'Montserrat', Arial, sans-serif",
+    bodyFont:   "'Cormorant Garamond', Georgia, serif",
   },
 
   /* ---- 5. Your upload link  (public — NOT a secret) ----------------------
