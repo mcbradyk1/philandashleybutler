@@ -20,7 +20,7 @@ window.EVENT_CONFIG = {
    *              "mcbradyk1", the address is:  mcbradyk1.github.io/eventname
    *              (no https://, no trailing slash — the QR sign adds those).
    */
-  eventName:  "Phil and Ashley",
+  eventName:  "PHIL & ASHLEY",
   subtitle:   "Wedding Guest Photobook",
   eventDate:  "October 17th, 2026",
   siteDomain: "mcbradyk1.github.io/philandashleybutler",
