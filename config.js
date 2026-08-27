@@ -20,10 +20,10 @@ window.EVENT_CONFIG = {
    *              "mcbradyk1", the address is:  mcbradyk1.github.io/eventname
    *              (no https://, no trailing slash — the QR sign adds those).
    */
-  eventName:  "Your Event Name Here",
-  subtitle:   "Share Your Photos",
-  eventDate:  "August 8th, 2026",
-  siteDomain: "mcbradyk1.github.io/eventname",
+  eventName:  "Phil and Ashley",
+  subtitle:   "Wedding Guest Photobook",
+  eventDate:  "October 17th, 2026",
+  siteDomain: "mcbradyk1.github.io/philandashleybutler",
 
   /* ---- 2. Wording ---------------------------------------------------------
    * Reword anything guests see. Emoji are fine. Leave a value "" to hide it.
@@ -60,7 +60,7 @@ window.EVENT_CONFIG = {
   features: {
     photoUpload:  true,
     guestGallery: true,
-    photobooth:   false,   // off by default — turn on only if you run a booth
+    photobooth:   true,   // off by default — turn on only if you run a booth
   },
 
   /* ---- 4. Colors & fonts --------------------------------------------------
@@ -90,6 +90,6 @@ window.EVENT_CONFIG = {
    * Leave "" until you've deployed.
    */
   endpoints: {
-    photoUpload: "",
+    photoUpload: "https://script.google.com/macros/s/AKfycbwlMbCkxrJtScJYxqBjEPW84K9JZzElUJVKAqpf_oBjkX1Ex0kuLvdiMR3Lm-Arog50gw/exec",
   },
 };
