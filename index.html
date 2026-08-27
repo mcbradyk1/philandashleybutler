@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guest Photobook</title>
+  <link rel="icon" href="favicon.ico">
+  <script src="config.js"></script>
+  <script src="branding.js"></script>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <h1>
+    <span class="couple" data-brand="eventName"></span>
+    <span class="subtitle" data-brand="subtitle"></span>
+  </h1>
+  <p class="tagline" data-brand="welcomeHeart"></p>
+
+  <!-- Share -->
+  <div data-feature-any="photoUpload">
+    <h2 class="section-title">Share</h2>
+    <div class="hub single share-hub">
+      <a href="upload.html" data-feature="photoUpload" data-tile="uploadPhotos">
+        <span class="tile-icon"  data-tile-icon></span>
+        <span class="tile-title" data-tile-title></span>
+        <span class="tile-sub"   data-tile-sub></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Browse -->
+  <div data-feature-any="guestGallery,photobooth">
+    <h2 class="section-title alt">Browse</h2>
+    <div class="hub browse-hub">
+      <a href="gallery.html" data-feature="guestGallery" data-tile="guestGallery">
+        <span class="tile-icon"  data-tile-icon></span>
+        <span class="tile-title" data-tile-title></span>
+        <span class="tile-sub"   data-tile-sub></span>
+      </a>
+      <a href="photobooth.html" data-feature="photobooth" data-tile="photobooth">
+        <span class="tile-icon"  data-tile-icon></span>
+        <span class="tile-title" data-tile-title></span>
+        <span class="tile-sub"   data-tile-sub></span>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div data-brand="eventDateLine"></div>
+    <div data-brand="uploadPatience"></div>
+  </footer>
+</body>
+</html>

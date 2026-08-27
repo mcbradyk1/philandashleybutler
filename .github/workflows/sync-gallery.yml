@@ -1,0 +1,53 @@
+name: Sync Guest Gallery
+
+on:
+  schedule:
+    - cron: "17 3 * * *"          # daily safety-net; upload-triggered dispatch is the fast path
+  workflow_dispatch:              # manual "Run workflow" button + Apps Script trigger
+
+concurrency:
+  group: gallery-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write                 # needed to push commits back
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write service-account file
+        env:
+          GDRIVE_SA_JSON: ${{ secrets.GDRIVE_SA_FILE }}
+        run: printf '%s' "$GDRIVE_SA_JSON" > /tmp/sa.json
+
+      - name: Sync guest photos
+        env:
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          GDRIVE_SA_FILE: /tmp/sa.json
+        run: python scripts/sync_gallery.py
+
+      - name: Commit new thumbnails + manifest
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add thumbnails manifest.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Sync guest gallery [skip ci]"
+            git push
+          fi

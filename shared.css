@@ -1,0 +1,308 @@
+/* ============================================================================
+ *  shared.css — styling for every page.
+ *
+ *  You pick TWO colors in config.js (primary + secondary). Everything else
+ *  here — darker button shades, soft borders, glows — is DERIVED from those
+ *  two with color-mix(), so the palette always stays coordinated.
+ *  The values after each var() fallback are the original wedding palette,
+ *  so the site still looks right even with JavaScript disabled.
+ * ========================================================================== */
+
+@font-face {
+  font-family: 'Alex Brush';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/alex-brush-latin-regular.woff2') format('woff2');
+}
+
+:root {
+  --script-font: var(--cfg-script-font, 'Alex Brush', Georgia, cursive);
+  --body-font:   var(--cfg-body-font, 'Georgia', 'Times New Roman', serif);
+
+  /* The two configured colors */
+  --primary:   var(--cfg-primary, #7a8f6a);
+  --secondary: var(--cfg-secondary, #8b7db8);
+
+  /* Derived darker shades for gradients / active states */
+  --primary-dark:   color-mix(in srgb, var(--primary) 82%, black);
+  --secondary-dark: color-mix(in srgb, var(--secondary) 80%, black);
+
+  /* Derived soft tints for borders / shadows / glows */
+  --primary-soft:    color-mix(in srgb, var(--primary) 40%, transparent);
+  --primary-shadow:  color-mix(in srgb, var(--primary) 25%, transparent);
+  --secondary-soft:  color-mix(in srgb, var(--secondary) 30%, transparent);
+  --secondary-glow:  color-mix(in srgb, var(--secondary) 40%, transparent);
+
+  /* Legacy aliases so older selectors keep working */
+  --accent:       var(--primary);
+  --accent-soft:  var(--primary-soft);
+  --accent-shadow:var(--primary-shadow);
+  --title:        var(--primary);
+  --subtitle:     var(--secondary);
+
+  --white: var(--cfg-background, #fdfdfb);
+  --text:  var(--cfg-text, #4a4a4a);
+  --muted: var(--cfg-muted, #999);
+}
+
+html { scrollbar-gutter: stable; }
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--body-font);
+  margin: 0;
+  padding: 40px 20px;
+  color: var(--text);
+  background-color: var(--white);
+  min-height: 100vh;
+}
+body.lightbox-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* Home button (top-left) */
+.home-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--primary);
+  text-decoration: none;
+  border: 1px solid var(--primary-soft);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  box-shadow: 0 2px 6px var(--primary-shadow);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 10;
+  transition: transform 0.1s;
+}
+.home-link:active { transform: translateY(1px); }
+
+@media (max-width: 600px) {
+  .home-link { top: 12px; left: 12px; padding: 7px 12px; font-size: 13px; }
+}
+
+h1 {
+  text-align: center;
+  margin: 10px 0 8px 0;
+  font-weight: normal;
+  line-height: 1.1;
+}
+h1 .couple {
+  font-family: var(--script-font);
+  font-size: 68px;
+  display: block;
+  line-height: 1;
+  color: var(--primary);
+}
+h1 .subtitle {
+  font-family: var(--script-font);
+  font-size: 42px;
+  color: var(--secondary);
+}
+@media (max-width: 600px) {
+  h1 .couple   { font-size: 52px; }
+  h1 .subtitle { font-size: 34px; }
+}
+
+.tagline {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 4px 0;
+}
+.refresh-hint {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.9em;
+  opacity: 0.85;
+  margin: 0 0 36px 0;
+}
+
+/* ---- Landing-page hubs ---- */
+.section-title {
+  text-align: center;
+  font-family: var(--script-font);
+  color: var(--primary);
+  font-size: 34px;
+  margin: 28px 0 12px 0;
+}
+.section-title.alt { color: var(--secondary); }
+.hub {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  max-width: 640px;
+  margin: 0 auto 8px auto;
+}
+.hub.single { grid-template-columns: 1fr; max-width: 340px; }
+@media (max-width: 600px) { .hub { grid-template-columns: 1fr; } }
+/* ---- Landing-page tiles: solid gradient cards, white text ---- */
+.hub a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 26px 16px;
+  border: none;
+  border-radius: 18px;
+  text-decoration: none;
+  color: #fff;                       /* icon + title inherit white */
+  box-shadow: 0 4px 14px var(--primary-shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.hub a:active { transform: translateY(1px); }
+.hub a .tile-icon  { font-size: 30px; }
+.hub a .tile-title { font-weight: 700; font-size: 18px; color: #fff; }
+.hub a .tile-sub   { font-size: 13px; font-style: italic;
+                     color: rgba(255, 255, 255, 0.85); }
+
+/* Share = secondary (purple), Browse = primary (green) */
+.share-hub  a { background: linear-gradient(135deg,
+                  var(--secondary) 0%, var(--secondary-dark) 100%);
+                box-shadow: 0 4px 14px var(--secondary-glow); }
+.browse-hub a { background: linear-gradient(135deg,
+                  var(--primary) 0%, var(--primary-dark) 100%);
+                box-shadow: 0 4px 14px var(--primary-shadow); }
+
+.hub .tile-sub   { color: var(--muted); font-size: 13px; font-style: italic; }
+
+/* ---- Gallery grid ---- */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  align-items: center;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.gallery-item { width: 100%; }
+@media (max-width: 900px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--primary-shadow);
+  cursor: pointer;
+  border: 3px solid #fff;
+  transition: transform 0.15s;
+  box-sizing: border-box;
+  background: #eee;
+}
+.gallery-item img:active { transform: scale(0.97); }
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-style: italic;
+  width: 100%;
+  grid-column: 1 / -1;
+}
+
+/* ---- Lightbox ---- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.lightbox.visible { display: flex; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: pinch-zoom;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+}
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+}
+.lightbox-nav.prev { left: 20px; }
+.lightbox-nav.next { right: 20px; }
+@media (max-width: 600px) { .lightbox-nav { display: none; } }
+
+.lightbox-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.lightbox-caption {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  min-height: 18px;
+  padding: 0 20px;
+  max-width: 80%;
+  margin: 0 auto;
+  word-break: break-word;
+}
+.lightbox-controls a {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary);
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 40px 0 20px 0;
+  font-style: italic;
+}

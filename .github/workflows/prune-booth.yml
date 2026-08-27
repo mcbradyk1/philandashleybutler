@@ -1,0 +1,62 @@
+name: Prune Photo Booth (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (show what would be removed, don't delete)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: booth-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write service-account file
+        env:
+          BOOTH_SA_JSON: ${{ secrets.BOOTH_DRIVE_SA_FILE }}
+        run: printf '%s' "$BOOTH_SA_JSON" > /tmp/sa.json
+
+      - name: Prune
+        env:
+          BOOTH_DRIVE_FOLDER_ID: ${{ secrets.BOOTH_DRIVE_FOLDER_ID }}
+          BOOTH_DRIVE_SA_FILE: /tmp/sa.json
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python scripts/prune_booth.py --dry-run
+          else
+            python scripts/prune_booth.py
+          fi
+
+      - name: Commit pruned manifest
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add booth_thumbnails booth_manifest.json
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Prune photo booth gallery [skip ci]"
+            git push
+          fi

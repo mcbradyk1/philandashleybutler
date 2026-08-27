@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guest Gallery</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="preconnect" href="https://lh3.googleusercontent.com">
+  <link rel="preconnect" href="https://drive.usercontent.google.com">
+  <script src="config.js"></script>
+  <script src="branding.js"></script>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <a class="home-link" href="index.html">&lsaquo; Home</a>
+
+  <h1>
+    <span class="couple" data-brand="eventName"></span>
+    <span class="subtitle" data-brand="subtitle"></span>
+  </h1>
+  <p class="tagline" data-brand-html="galleryTagline"></p>
+  <p class="refresh-hint" data-brand-html="galleryRefresh"></p>
+
+  <div id="g" class="gallery"></div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">&#10005;</button>
+    <button class="lightbox-nav prev" onclick="navLightbox(-1, event)" aria-label="Previous">&lsaquo;</button>
+    <img id="lightboxImg" alt="Photo">
+    <button class="lightbox-nav next" onclick="navLightbox(1, event)" aria-label="Next">&rsaquo;</button>
+    <div class="lightbox-controls">
+      <div id="lightboxCaption" class="lightbox-caption"></div>
+      <a id="lightboxSave" href="#">&#128190; Save Hi Res Photo</a>
+    </div>
+  </div>
+
+  <footer data-brand-html="footerHeart"></footer>
+
+  <!-- Which manifest/thumbnails this page shows. gallery.js reads these. -->
+  <script>
+    window.MANIFEST_URL = 'manifest.json';
+    window.THUMB_DIR = 'thumbnails';
+  </script>
+  <script src="gallery.js"></script>
+</body>
+</html>
