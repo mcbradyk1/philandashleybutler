@@ -74,9 +74,9 @@ window.EVENT_CONFIG = {
     primary:    "#6A7280",
     secondary:  "#D8C8A8",
   
-    background: "#F7F5F2",
-    text:       "#4A4A4A",
-    muted:      "#999999",
+    background: "#1A1A1A",
+    text:       "#F5F2EC",
+    muted:      "#B8B8B8",
   
     googleFonts: ["Cormorant Garamond"],
   
