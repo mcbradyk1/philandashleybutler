@@ -44,6 +44,10 @@
   --white: var(--cfg-background, #fdfdfb);
   --text:  var(--cfg-text, #4a4a4a);
   --muted: var(--cfg-muted, #999);
+
+  --surface:    var(--cfg-surface, #ffffff);
+  --surface-alt: var(--cfg-surface-alt, #f7f5f0);
+  --on-surface: var(--cfg-on-surface, var(--text));
 }
 
 html { scrollbar-gutter: stable; }
