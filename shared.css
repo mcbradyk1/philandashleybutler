@@ -150,7 +150,11 @@ h1 .subtitle {
   max-width: 640px;
   margin: 0 auto 8px auto;
 }
-.hub.single { grid-template-columns: 1fr; max-width: 340px; }
+.hub.single { grid-template-columns: 1fr; max-width: 500px; }
+.browse-hub {
+  grid-template-columns: 1fr;
+  max-width: 500px;
+}
 @media (max-width: 600px) { .hub { grid-template-columns: 1fr; } }
 /* ---- Landing-page tiles: solid gradient cards, white text ---- */
 .hub a {
