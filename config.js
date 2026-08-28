@@ -71,17 +71,22 @@ window.EVENT_CONFIG = {
    * Any CSS color works ("#7a8f6a", "rebeccapurple", "rgb(...)").
    */
   theme: {
-    primary:    "#6A7280",
-    secondary:  "#D8C8A8",
+    primary:    "#626A78",   // slate blue-gray
+    secondary:  "#D8BD86",   // warm gold
   
-    background: "#1A1A1A",
-    text:       "#F5F2EC",
-    muted:      "#B8B8B8",
+    background: "#171717",   // page background
+    surface:    "#22252B",   // cards and upload box
+    surfaceAlt: "#2B2F37",   // inputs and secondary surfaces
+    onSurface:  "#F2ECE2",   // text displayed on dark surfaces
+  
+    text:       "#E8E1D8",
+    muted:      "#B5AEA5",
   
     googleFonts: ["Cormorant Garamond"],
+    scriptFont:  "'Cormorant Garamond', Georgia, serif",
+    bodyFont:    "'Cormorant Garamond', Georgia, serif",
   
-    scriptFont: "'Cormorant Garamond', Georgia, serif",
-    bodyFont:   "'Cormorant Garamond', Georgia, serif",
+    pattern: false,
   },
 
   /* ---- 5. Your upload link  (public — NOT a secret) ----------------------
