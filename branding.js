@@ -46,9 +46,13 @@
   
   setVar('--cfg-script-font', T.scriptFont);
   setVar('--cfg-body-font',   T.bodyFont);
-  setVar('--cfg-background',   T.background);
-  setVar('--cfg-text',         T.text);
-  setVar('--cfg-muted',        T.muted);
+  
+  setVar('--cfg-background', T.background);
+  setVar('--cfg-surface',     T.surface);
+  setVar('--cfg-surface-alt', T.surfaceAlt);
+  setVar('--cfg-on-surface',  T.onSurface);
+  setVar('--cfg-text',        T.text);
+  setVar('--cfg-muted',       T.muted);
   
   // Base colors
   setVar('--primary',   primary);
