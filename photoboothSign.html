@@ -14,7 +14,7 @@
   <style>
     .sign { max-width: 640px; margin: 0 auto; text-align: center; }
     #qr { display: inline-block; margin: 24px auto; padding: 16px;
-          background: #fff; border-radius: 16px;
+          background: #fff !important; border-radius: 16px;
           box-shadow: 0 4px 16px var(--accent-shadow); }
     .sign .domain {
       font-family: "Trebuchet MS", Arial, sans-serif;
@@ -52,7 +52,12 @@
       var domain = (window.EVENT_CONFIG && window.EVENT_CONFIG.siteDomain) || location.host;
       var url = /^https?:\/\//.test(domain) ? domain : 'https://' + domain;
       new QRCode(document.getElementById('qr'), {
-        text: url, width: 240, height: 240, correctLevel: QRCode.CorrectLevel.M
+        text: url,
+        width: 240,
+        height: 240,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
       });
     })();
   </script>
