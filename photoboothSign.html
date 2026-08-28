@@ -16,7 +16,17 @@
     #qr { display: inline-block; margin: 24px auto; padding: 16px;
           background: #fff; border-radius: 16px;
           box-shadow: 0 4px 16px var(--accent-shadow); }
-    .sign .domain { font-size: 20px; color: var(--accent); font-weight: 700; margin-top: 8px; }
+    .sign .domain {
+      font-size: 20px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-top: 8px;
+    
+      /* Make 1, I, l, O, 0 clearly distinguishable */
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+      font-variant-numeric: lining-nums tabular-nums;
+      letter-spacing: 0.4px;
+    }
     .sign .cta { font-size: 22px; color: var(--subtitle); font-family: var(--script-font); }
     .sign .blurb { color: var(--muted); font-style: italic; max-width: 460px; margin: 12px auto; }
     @media print { .home-link { display: none; } body { padding: 20px; } }
