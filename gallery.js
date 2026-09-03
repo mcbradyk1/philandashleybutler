@@ -4,6 +4,15 @@
   var LIGHTBOX_SCROLL_Y = 0;
   var LIGHTBOX_HISTORY = false;
 
+  // Event-specific accent emoji from config.js.
+  // Falls back to a white heart if config.js is missing or incomplete.
+  var themeHeart =
+    window.EVENT_CONFIG &&
+    window.EVENT_CONFIG.text &&
+    window.EVENT_CONFIG.text.heart
+      ? window.EVENT_CONFIG.text.heart
+      : '\uD83E\uDD0D';
+
   // Set per-page (gallery.html vs photobooth.html). Falls back to guest defaults.
   var manifestUrl = window.MANIFEST_URL || 'manifest.json';
   var thumbDir    = window.THUMB_DIR   || 'thumbnails';
@@ -12,11 +21,94 @@
   // so prefetch always matches what the browser actually requests.
   var IMG_SIZE = (window.innerWidth > 900) ? '=w2048' : '=w1200';
 
+  // --- Justified layout config ---
+  // Row-based layout (like Flickr / 500px): every photo keeps its real
+  // aspect ratio, and each row's HEIGHT is adjusted so the row fills the
+  // container edge-to-edge. This preserves strict left-to-right order
+  // (unlike CSS masonry, which fills top-to-bottom) and uses the full
+  // width of any monitor, including 4K, with no per-size breakpoints.
+  var GAP = 12;                        // must match the visual gap you want
+  var POSITIONS = [];                  // {left,top,width,height} per FILES index
+  var LAYOUT_WIDTH = 0;                // container width the layout was built for
+
+  function targetRowHeight() {
+    var w = window.innerWidth;
+    if (w <= 1024) return 300;   // hand held
+    return 450;                  // desktop 1080p+: ~6 across
+  }
+
+  function aspectOf(f) {
+    return (f.w && f.h) ? (f.w / f.h) : 1;   // fallback square if missing
+  }
+
+  // Compute justified geometry for EVERY file up front. This is pure math
+  // (fast even for 600+ photos); we still only create <img> tiles for the
+  // batches that scroll into view, so nothing heavy loads at once.
+  function computeLayout(containerWidth) {
+    var target = targetRowHeight();
+    var positions = new Array(FILES.length);
+    var i = 0, top = 0;
+
+    while (i < FILES.length) {
+      // Grow a row until it would overflow at the target height.
+      var rowStart = i, count = 0, aspectSum = 0;
+      while (i < FILES.length) {
+        aspectSum += aspectOf(FILES[i]);
+        count++;
+        i++;
+        var rowW = aspectSum * target + (count - 1) * GAP;
+        if (rowW >= containerWidth) break;
+      }
+
+      var isLast = (i >= FILES.length);
+      var available = containerWidth - (count - 1) * GAP;
+      // Fitted height makes the row exactly fill the width. Don't stretch a
+      // short final row past the target, or one photo would blow up huge.
+      var rowH = available / aspectSum;
+      if (isLast) rowH = Math.min(rowH, target);
+
+      var left = 0;
+      for (var j = rowStart; j < i; j++) {
+        var w = aspectOf(FILES[j]) * rowH;
+        positions[j] = {
+          left:   Math.round(left),
+          top:    Math.round(top),
+          width:  Math.round(w),
+          height: Math.round(rowH)
+        };
+        left += w + GAP;
+      }
+      top += rowH + GAP;
+    }
+
+    POSITIONS = positions;
+    LAYOUT_WIDTH = containerWidth;
+    return Math.max(0, Math.round(top - GAP));   // total content height
+  }
+
+  // One-time injected styles so gallery.js is self-contained and does not
+  // need any change to shared.css. Switches .gallery out of grid mode into
+  // an absolutely-positioned justified container.
+  function injectStyles() {
+    if (document.getElementById('justified-style')) return;
+    var s = document.createElement('style');
+    s.id = 'justified-style';
+    s.textContent =
+      '.gallery.justified{display:block;position:relative;margin:0 auto;' +
+      'max-width:2600px;}' +
+      '.gallery.justified .gallery-item{position:absolute;margin:0;' +
+      'overflow:hidden;border-radius:10px;}' +
+      '.gallery.justified .gallery-item img{width:100%;height:100%;' +
+      'object-fit:cover;display:block;}';
+    document.head.appendChild(s);
+  }
+
   // Show "Loading photos…" only if the fetch takes longer than 300ms.
+  // Prevents a flash on fast connections.
   var loadingTimer = setTimeout(function () {
     var g = document.getElementById('g');
     if (!g.hasChildNodes()) {
-      g.innerHTML = '<div class="empty">Loading photos\u2026</div>';
+      g.innerHTML = '<div class="empty">Photos coming soon ' + themeHeart + '</div>';
     }
   }, 300);
 
@@ -27,58 +119,109 @@
       FILES = files;
       var g = document.getElementById('g');
       if (!files.length) {
-        g.innerHTML = '<div class="empty">Photos coming soon \uD83D\uDC9A</div>';
+        g.innerHTML = '<div class="empty">Photos coming soon ' + themeHeart + '</div>';
         return;
       }
+
+      injectStyles();
+      g.classList.add('justified');
       g.innerHTML = '';
 
       // --- Infinite scroll config ---
-      var BATCH_SIZE = 60;
+      var BATCH_SIZE = 60;      // photos per batch
       var renderedCount = 0;
+      var observer;
 
-      function renderBatch() {
-        var next = FILES.slice(renderedCount, renderedCount + BATCH_SIZE);
-        if (!next.length) return;
-        var html = next.map(function (f, i) {
-          var globalIdx = renderedCount + i;
-          var cap = (f.caption || '').replace(/"/g, '&quot;');
-          return '<div class="gallery-item" data-index="' + globalIdx + '">' +
-                   '<img loading="lazy" src="' + thumbDir + '/' + f.id + '.jpg" ' +
-                        'alt="' + cap + '">' +
-                 '</div>';
-        }).join('');
-
-        var sentinel = document.getElementById('scroll-sentinel');
-        if (sentinel) sentinel.remove();
-        g.insertAdjacentHTML('beforeend', html);
-        renderedCount += next.length;
-
-        // Wire click handlers on the newly added items only.
-        g.querySelectorAll('.gallery-item:not([data-wired])').forEach(function (item) {
-          item.setAttribute('data-wired', '1');
-          item.addEventListener('click', function () {
-            openLightbox(parseInt(item.getAttribute('data-index'), 10));
-          });
-        });
-
-        if (renderedCount < FILES.length) {
-          g.insertAdjacentHTML('beforeend', '<div id="scroll-sentinel"></div>');
-          observer.observe(document.getElementById('scroll-sentinel'));
-        }
+      function positionTile(el, idx) {
+        var p = POSITIONS[idx];
+        el.style.left   = p.left + 'px';
+        el.style.top    = p.top + 'px';
+        el.style.width  = p.width + 'px';
+        el.style.height = p.height + 'px';
       }
 
-      var observer = new IntersectionObserver(function (entries) {
+      function placeSentinel() {
+        var old = document.getElementById('scroll-sentinel');
+        if (old) old.remove();
+        if (renderedCount >= FILES.length) return;
+        var s = document.createElement('div');
+        s.id = 'scroll-sentinel';
+        s.setAttribute('aria-hidden', 'true');
+        s.style.position = 'absolute';
+        s.style.left = '0';
+        s.style.width = '1px';
+        s.style.height = '1px';
+        // Sit at the y where the next unrendered batch begins.
+        s.style.top = POSITIONS[renderedCount].top + 'px';
+        g.appendChild(s);
+        observer.observe(s);
+      }
+
+      function renderBatch() {
+        var end = Math.min(renderedCount + BATCH_SIZE, FILES.length);
+        for (var idx = renderedCount; idx < end; idx++) {
+          var f = FILES[idx];
+          var item = document.createElement('div');
+          item.className = 'gallery-item';
+          item.setAttribute('data-index', idx);
+          positionTile(item, idx);
+
+          var img = document.createElement('img');
+          img.loading = 'lazy';
+          img.width = f.w;
+          img.height = f.h;
+          img.src = thumbDir + '/' + f.id + '.jpg';
+          img.alt = f.caption || '';
+          item.appendChild(img);
+
+          (function (i) {
+            item.addEventListener('click', function () { openLightbox(i); });
+          })(idx);
+
+          g.appendChild(item);
+        }
+        renderedCount = end;
+        placeSentinel();
+      }
+
+      // Recompute geometry on resize and reposition everything already drawn.
+      var resizeTimer = null;
+      function relayout() {
+        var width = g.clientWidth;
+        if (!width) return;
+        var totalH = computeLayout(width);
+        g.style.height = totalH + 'px';
+        IMG_SIZE = (window.innerWidth > 900) ? '=w2048' : '=w1200';
+
+        g.querySelectorAll('.gallery-item').forEach(function (el) {
+          positionTile(el, parseInt(el.getAttribute('data-index'), 10));
+        });
+        placeSentinel();
+      }
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(relayout, 150);
+      });
+
+      // IntersectionObserver watches the sentinel; when it enters the
+      // viewport (or gets within 400px of it), load the next batch.
+      observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) renderBatch();
         });
       }, { rootMargin: '400px' });
 
+      // Initial layout + first batch.
+      var totalH = computeLayout(g.clientWidth);
+      g.style.height = totalH + 'px';
       renderBatch();
     })
     .catch(function () {
       clearTimeout(loadingTimer);
       document.getElementById('g').innerHTML =
-        '<div class="empty">Gallery is warming up \u2014 check back soon \uD83D\uDC9A</div>';
+        '<div class="empty">Gallery is warming up \u2014 check back soon ' +
+        themeHeart +
+        '</div>';
     });
 
   function openLightbox(index) {
