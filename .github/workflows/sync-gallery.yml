@@ -1,8 +1,8 @@
 name: Sync Guest Gallery
 
 on:
-  schedule:
-    - cron: "17 3 * * *"          # daily safety-net; upload-triggered dispatch is the fast path
+  #schedule:
+  #  - cron: "17 3 * * *"          # daily safety-net; upload-triggered dispatch is the fast path
   workflow_dispatch:              # manual "Run workflow" button + Apps Script trigger
 
 concurrency:
