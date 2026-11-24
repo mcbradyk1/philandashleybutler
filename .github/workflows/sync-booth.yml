@@ -1,8 +1,8 @@
 name: Sync Photo Booth Gallery
 
 on:
-  schedule:
-    - cron: "37 3 * * *"          # daily safety-net; upload-triggered dispatch is the fast path
+  #schedule:
+  #  - cron: "37 3 * * *"          # daily safety-net; upload-triggered dispatch is the fast path
   workflow_dispatch:              # manual "Run workflow" button + Apps Script trigger
 
 concurrency:
